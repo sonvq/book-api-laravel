@@ -32,7 +32,7 @@ class AuthenticateController extends Controller {
     }
 
     public function register(Request $request) {
-echo url('/'); die;
+
         $input = $request->all();
         $user = '';
 
@@ -68,8 +68,12 @@ echo url('/'); die;
         } else {
             return ApiResponse::errorValidation($validator);
         }
-
-        return ApiResponse::successResponse($user);
+        
+        $returnObject = new \stdClass();
+        $returnObject->user = $user;
+        $returnObject->token = JWTAuth::fromUser($user);
+        
+        return ApiResponse::successResponse($returnObject);
     }
 
     // somewhere in your controller
@@ -152,8 +156,8 @@ echo url('/'); die;
             echo 'Error: ' . $e->getMessage();
         }
 
-        $avatarArray['avatar_image'] = $imgNamePublicPath;
-        $avatarArray['avatar_thumb'] = $imgThumbNamePublicPath;
+        $avatarArray['avatar_image'] = url('/') . $userAvatarPath . $imgName;
+        $avatarArray['avatar_thumb'] = url('/') . $userAvatarPath . $imgThumbName;
 
         return $avatarArray;
     }
