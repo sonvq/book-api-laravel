@@ -21,14 +21,20 @@ class AuthenticateController extends Controller {
         try {
             // verify the credentials and create a token for the user
             if (!$token = JWTAuth::attempt($credentials)) {
-                return ApiResponse::errorUnauthorized('invalid_credentials');
+                return ApiResponse::errorUnauthorized('Wrong email or password');
             }
         } catch (JWTException $e) {
             // something went wrong
-            return ApiResponse::errorInternal('could_not_create_token');
+            return ApiResponse::errorInternal('Could not create token');
         }
         // if no errors are encountered we can return a JWT
-        return ApiResponse::successResponse(compact('token'));
+        $user = User::where('email', '=', $credentials['email'])->first();
+        
+        $returnObject = new \stdClass();
+        $returnObject->user = $user;
+        $returnObject->token = compact('token');
+        
+        return ApiResponse::successResponse($returnObject);
     }
 
     public function register(Request $request) {
