@@ -11,6 +11,27 @@
 |
 */
 
+
+/** ------------------------------------------
+ *  Route model binding
+ *  ------------------------------------------
+ *	Models are bson encoded objects (mongoDB)
+ */
+Route::model('users', 'User');
+
+
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::group(['prefix' => 'api/v1'], function()
+{
+    Route::post('register', 'AuthenticateController@register');
+    Route::post('login', 'AuthenticateController@login');
+    
+    Route::group(['middleware' => 'jwt.auth'], function() {
+        Route::get('authenticate', 'AuthenticateController@getAuthenticatedUser');
+    });
+            
+	    
 });
