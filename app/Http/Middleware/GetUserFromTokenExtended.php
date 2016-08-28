@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Http\Middleware\BaseJWTMiddleware;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class GetUserFromTokenExtended extends BaseJWTMiddleware
 {

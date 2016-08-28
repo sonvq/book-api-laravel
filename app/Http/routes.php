@@ -28,10 +28,12 @@ Route::group(['prefix' => 'api/v1'], function()
 {
     Route::post('register', 'AuthenticateController@register');
     Route::post('login', 'AuthenticateController@login');
+    Route::get('token/refresh', 'AuthenticateController@refresh');
     
     Route::group(['middleware' => 'jwt.auth'], function() {
         Route::get('authenticate', 'AuthenticateController@getAuthenticatedUser');
+        Route::resource('books', 'BookController');
     });
-            
+        
 	    
 });

@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
+use Tymon\JWTAuth\Exceptions\PayloadException;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use Illuminate\Http\Request;
 use App\Http\Helper\Common;
 use App\Http\Helper\ApiResponse;
@@ -12,7 +16,7 @@ use App\Components\SimpleImage;
 use JWTAuth;
 use App\User;
 
-class AuthenticateController extends Controller {
+class AuthenticateController extends BaseController {
 
     public function login(Request $request) {
 
@@ -85,23 +89,42 @@ class AuthenticateController extends Controller {
     // somewhere in your controller
     public function getAuthenticatedUser() {
         try {
-
             if (!$user = JWTAuth::parseToken()->authenticate()) {
-                return response()->json(['user_not_found'], 404);
+                return ApiResponse::errorNotFound('user_not_found');
             }
-        } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
-
-            return response()->json(['token_expired'], $e->getStatusCode());
-        } catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-
-            return response()->json(['token_invalid'], $e->getStatusCode());
-        } catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
-
-            return response()->json(['token_absent'], $e->getStatusCode());
+        } catch (TokenExpiredException $e) {
+            return ApiResponse::errorUnauthorized('token_expired');
+        } catch (TokenInvalidException $e) {
+            return ApiResponse::errorUnauthorized('token_invalid');
+        } catch (JWTException $e) {
+            return ApiResponse::errorUnauthorized('token_absent');
         }
 
         // the token is valid and we have found the user via the sub claim
-        return response()->json(compact('user'));
+        return  ApiResponse::successResponse(compact('user'));
+    }
+    
+    public function refresh(Request $request) {
+        try {
+            $current_token = JWTAuth::getToken();
+            if (!$current_token) {
+                return ApiResponse::errorUnauthorized('token_absent');
+            }
+            $token = JWTAuth::refresh($current_token);
+            return ApiResponse::successResponse(compact('token'));
+        } catch (JWTException $e) {
+            if ($e instanceof TokenExpiredException) {
+                return ApiResponse::errorUnauthorized('token_expired');
+            } else if ($e instanceof TokenBlacklistedException) {
+                return ApiResponse::errorUnauthorized('token_blacklisted');
+            } else if ($e instanceof TokenInvalidException) {
+                return ApiResponse::errorUnauthorized('token_invalid');
+            } else if ($e instanceof PayloadException) {
+                return ApiResponse::errorUnauthorized('token_expired');
+            } else if ($e instanceof JWTException) {
+                return ApiResponse::errorUnauthorized('token_invalid');
+            }
+        }
     }
 
     protected function getAndCropImageAvatar($user, $imageFile, $removeOld) {

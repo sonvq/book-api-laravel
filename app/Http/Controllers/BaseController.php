@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helper\ApiResponse;
 
 class BaseController extends Controller
 {
@@ -52,4 +53,9 @@ class BaseController extends Controller
 
         return $result;
     }
+    
+    public function missingMethod( $parameters = array() )
+	{
+        return ApiResponse::errorNotFound('Sorry, no method found');
+	}
 }
