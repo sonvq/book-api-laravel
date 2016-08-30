@@ -7,6 +7,8 @@ use App\Category;
 class CategoriesTableSeeder extends Seeder {
 
     public function run() {
+        
+        // http://reference.yourdictionary.com/books-literature/different-types-of-books.html
         DB::statement('SET FOREIGN_KEY_CHECKS = 0'); 
         DB::table('categories')->truncate();
 

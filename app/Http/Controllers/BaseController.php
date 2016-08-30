@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helper\ApiResponse;
+use Illuminate\Support\Facades\Request as RequestSupport;
 
 class BaseController extends Controller
 {
     protected function processInput() {
-        $input = Input::all();
+        $input = RequestSupport::all();
 
         $result = array();
 

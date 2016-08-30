@@ -33,6 +33,8 @@ Route::group(['prefix' => 'api/v1'], function()
     Route::group(['middleware' => 'jwt.auth'], function() {
         Route::get('authenticate', 'AuthenticateController@getAuthenticatedUser');
         Route::resource('books', 'BookController');
+        
+        Route::resource('categories', 'CategoryController');
     });
         
 	    

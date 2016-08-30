@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model {
+class Category extends BaseModel {
 
     /**
      * The table associated with the model.
@@ -13,7 +13,10 @@ class Category extends Model {
      */
     protected $table = 'categories';
     
-     /**
+    protected static $_table = 'categories';
+
+
+    /**
      * Indicates if the model should be timestamped.
      *
      * @var bool
