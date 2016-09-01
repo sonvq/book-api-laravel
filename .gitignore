@@ -6,3 +6,4 @@ Homestead.json
 .env
 /nbproject/private/
 /public/uploads/avatars
+/public/uploads/books
