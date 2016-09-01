@@ -31,11 +31,16 @@ class Book extends Model {
         'sale_off' => 'numeric',
         'price' => 'numeric',
         'description' => 'required',
-        'publisher' => 'required'
+        'publisher' => 'required',
+        'images'    => 'required'
     );
 
     public static function getCreateRules() {
         return self::$createRules;
+    }
+    
+    public function photos() {
+    	return $this->hasMany('App\Photo');
     }
 
 }
