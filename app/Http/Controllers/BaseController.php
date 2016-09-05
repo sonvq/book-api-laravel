@@ -21,11 +21,13 @@ class BaseController extends Controller
 
         $sort = array();
         if (array_key_exists('sort', $input)) {
-            foreach (explode(',', $input['sort']) as $sortValue) {
-                if (substr($sortValue, 0, 1) == '-') {
-                    $sort[substr($sortValue, 1)] = 'Desc';
-                } else {
-                    $sort[$sortValue] = 'Asc';
+            if (!empty($input['sort'])) {
+                foreach (explode(',', $input['sort']) as $sortValue) {
+                    if (substr($sortValue, 0, 1) == '-') {
+                        $sort[substr($sortValue, 1)] = 'Desc';
+                    } else {
+                        $sort[$sortValue] = 'Asc';
+                    }
                 }
             }
 
