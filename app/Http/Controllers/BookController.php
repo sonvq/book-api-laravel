@@ -43,10 +43,16 @@ class BookController extends BaseController
             $book = new Book();
             $book->name = $input['name'];
             $book->category_id = $input['category_id'];
+            $book->user_id = $input['user_id'];
+            $book->address = $input['address'];
+            $book->description = $input['description'];
+            $book->publisher = $input['publisher'];
             
             $book->latitude = $request->has('latitude') ? $input['latitude'] : null;
             $book->longitude = $request->has('longitude') ? $input['longitude'] : null;
             $book->purpose = $request->has('purpose') ? $input['purpose'] : null;
+            $book->sale_off = $request->has('sale_off') ? $input['sale_off'] : null;
+            $book->price = $request->has('price') ? $input['price'] : null;
             
             // getting all of the post data
             $images = $request->file('images');
@@ -86,6 +92,35 @@ class BookController extends BaseController
         $returnBook->photos;       
         
         return ApiResponse::successResponse($returnBook->toArray());
+    }
+    
+    public function index() {
+        $query = $this->processInput();               
+
+        $result = Book::getAll($query['where'], $query['sort'], $query['limit'], $query['offset']);
+        
+        if (count($result) > 0) {    
+            // Add User info to event list
+            foreach ($result as $id=>$object) {                 
+                $object->photos = Photo::where('book_id', '=', $object->id)->get()->toArray();
+            }
+            
+            // TODO: optimize
+            foreach ($result as $id=>$object) {
+                if(!empty($query['fields'])) {
+                    foreach ($object as $key=>$value) {
+                        if(in_array($key, $query['fields'])) {
+                            continue;
+                        } else {
+                            unset($object->$key);
+                        }
+                    }
+                }                
+            }
+                        
+        }
+        
+        return ApiResponse::successResponse($result);       
     }
     
     protected function removeBookPhoto($book) {

@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Book extends Model {
+class Book extends BaseModel {
 
     /**
      * The table associated with the model.
@@ -13,6 +13,9 @@ class Book extends Model {
      */
     protected $table = 'books';
     
+    protected static $_table = 'books';
+            
+
      /**
      * Indicates if the model should be timestamped.
      *
@@ -41,6 +44,15 @@ class Book extends Model {
     
     public function photos() {
     	return $this->hasMany('App\Photo');
+    }
+    
+    public static function onPreQuery(\Illuminate\Database\Query\Builder  $query, &$where = null)
+    {
+        if (isset($where['search']) && !empty($where['search'])) {
+            $query->where('r.name', 'like', '%' . $where['search'] . '%');
+            
+            unset($where['search']);
+        }
     }
 
 }
