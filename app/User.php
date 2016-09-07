@@ -31,7 +31,7 @@ class User extends Authenticatable {
         'latitude' => ['regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
         'longitude' => ['regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
         'birthday' => 'before:now|date_format:"Y-m-d"',
-        'avatar' => 'mimes:jpeg,bmp,png,gif,jpg'
+        'avatar' => 'mimes:jpeg,bmp,png,gif'
     );
 
     public static function getCreateRules() {

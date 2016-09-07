@@ -60,7 +60,7 @@ class BookController extends BaseController
             $validateImage = true;
             
             foreach ($images as $image) {
-                $rules = array('images' => 'mimes:jpeg,bmp,png,gif,jpg');
+                $rules = array('images' => 'mimes:jpeg,bmp,png,gif');
                 $validator = Validator::make(array('images' => $image), $rules);
                 if (!$validator->passes()) {
                     $validateImage = false;
