@@ -47,9 +47,11 @@ class Book extends BaseModel {
     }
     
     public static function onPreQuery(\Illuminate\Database\Query\Builder  $query, &$where = null)
-    {
-        if (isset($where['search']) && !empty($where['search'])) {
-            $query->where('r.name', 'like', '%' . $where['search'] . '%');
+    {        
+        if (isset($where['search'])) {
+            if (!empty($where['search'])) {
+                $query->where('r.name', 'like', '%' . $where['search'] . '%');
+            }
             
             unset($where['search']);
         }
